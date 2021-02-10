@@ -1,0 +1,81 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Data.SqlClient;
+
+namespace TestApp2_SELECT
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            
+            string connString = @"Server =.\SQL2K17; Database = SampleDB; Trusted_Connection = True;";
+
+            
+           
+            string Name, Designation, Phone, Bio, Bloodgroup;
+
+            try
+            {
+               
+                using (SqlConnection conn = new SqlConnection(connString))
+                {
+
+                    string query = @"SELECT e.Name,e.Designation,e.Phone,e.Bio,l.Bloodgroup
+                                     FROM employees e
+                                     INNER JOIN Designayion l on e.DesignationID=l.id;
+                                     ";
+                    
+                    SqlCommand cmd = new SqlCommand(query, conn);
+
+                    
+                    conn.Open();
+
+                    
+                    SqlDataReader dr = cmd.ExecuteReader();
+
+                    Console.WriteLine(Environment.NewLine + "Retrieving data from database..." + Environment.NewLine);
+                    Console.WriteLine("Retrieved records:");
+
+      
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            empName = dr.GetString(0);
+                            empDesignation = dr.GetString(1);
+                            empPhone = dr.GetString(2);
+                            Bio = dr.GetString(3);
+                            Bloodgroup = dr.GetString(4);
+
+                            
+                            Console.WriteLine("{0},{1},{2},{3},{4}", empName.ToString(), empName, empDesignation, empPhone, Bio,Bloodgroup );
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("No data found.");
+                    }
+
+                    
+                    dr.Close();
+
+                    
+                    conn.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                Console.WriteLine("Exception: " + ex.Message);
+            }
+
+
+
+
+        }
+    }
+}
